@@ -1,8 +1,7 @@
-use crate::tokens::token::Token;
-use crate::tokens::token_type::TokenType;
+use crate::token::{ Token, TokenType };
 
 #[derive(Debug)]
-struct Lexer {
+pub struct Lexer {
     input_chars: Vec<char>,
     current_position: usize,
     read_position: usize,
@@ -22,7 +21,7 @@ impl Lexer {
         lexer
     }
 
-    fn read_char(&self) {
+    fn read_char(&mut self) {
         self.current_position = self.read_position;
         if self.read_position < self.input_chars.len() {
             self.current_char = Some(self.input_chars[self.read_position]);
@@ -32,59 +31,106 @@ impl Lexer {
         }
     }
 
-    fn next_token(&self) -> Token {
+    fn next_token(&mut self) -> Token {
         let token = self.create_token();
         self.read_char();
 
         token
     }
 
-    fn create_token(&self) -> Token {
+    fn create_token(&mut self) -> Token {
         match self.current_char {
             Some(char) => {
                 match char {
                     '=' => Token {
-                        token_type: tokens::token_type::TokenType::Assign,
+                        token_type: TokenType::Assign,
                         literal: char.to_string(),
                     },
                     ';' => Token {
-                        token_type: token::TokenType.Semicolon,
+                        token_type: TokenType::Semicolon,
                         literal: char.to_string(),
                     },
                     '(' => Token {
-                        token_type: token::TokenType.Lparen,
+                        token_type: TokenType::LParen,
                         literal: char.to_string(),
                     },
                     ')' => Token {
-                        token_type: token::TokenType.Rparen,
+                        token_type: TokenType::RParen,
                         literal: char.to_string(),
                     },
                     ',' => Token {
-                        token_type: token::TokenType.Comma,
+                        token_type: TokenType::Comma,
                         literal: char.to_string(),
                     },
                     '+' => Token {
-                        token_type: token::TokenType.Plus,
+                        token_type: TokenType::Plus,
                         literal: char.to_string(),
                     },
                     '{' => Token {
-                        token_type: token::TokenType.Lbrace,
+                        token_type: TokenType::LBrace,
                         literal: char.to_string(),
                     },
                     '}' => Token {
-                        token_type: token::TokenType.Rbrace,
+                        token_type: TokenType::RBrace,
                         literal: char.to_string(),
                     },
                     _ => Token {
-                        token_type: token::TokenType.Illegal,
+                        token_type: TokenType::Illegal,
                         literal: char.to_string(),
                     },
                 }
             },
             None => Token {
-                token_type: token::TokenType.Eof,
+                token_type: TokenType::Eof,
                 literal: "".to_string(),
             },
         }
     }
+
 }
+
+#[test]
+fn next_token_test() {
+    let input = "=+(){},;";
+    let mut lexer = Lexer::new(input.to_string());
+
+    let expecteds = vec![
+        Token {
+            token_type: TokenType::Assign,
+            literal: "=".to_string(),
+        },
+        Token {
+            token_type: TokenType::Plus,
+            literal: "+".to_string(),
+        },
+        Token {
+            token_type: TokenType::LParen,
+            literal: "(".to_string(),
+        },
+        Token {
+            token_type: TokenType::RParen,
+            literal: ")".to_string(),
+        },
+        Token {
+            token_type: TokenType::LBrace,
+            literal: "{".to_string(),
+        },
+        Token {
+            token_type: TokenType::RBrace,
+            literal: "}".to_string(),
+        },
+        Token {
+            token_type: TokenType::Comma,
+            literal: ",".to_string(),
+        },
+        Token {
+            token_type: TokenType::Semicolon,
+            literal: ";".to_string(),
+        },
+    ];
+
+    for expected in expecteds {
+        assert_eq!(lexer.next_token(), expected);
+    }
+}
+
