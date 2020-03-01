@@ -9,9 +9,9 @@ pub struct Lexer {
 }
 
 impl Lexer {
-    pub fn new(input: String) -> Lexer {
+    pub fn new(input: &ToString) -> Lexer {
         let mut lexer = Lexer {
-            input: input,
+            input: input.to_string(),
             current_position: 0,
             read_position: 0,
             current_char: None,
@@ -33,12 +33,14 @@ impl Lexer {
 
     fn next_token(&mut self) -> Token {
         let token = self.create_token();
+
         self.read_char();
 
         token
     }
 
     fn create_token(&mut self) -> Token {
+        self.skip_whitespace();
         match self.current_char {
             Some(cur) => {
                 match cur {
@@ -107,11 +109,18 @@ impl Lexer {
         
         String::from(literal_chars)
     }
+
+    fn skip_whitespace(&mut self) {
+        while self.current_char.map(|ch| ch.is_whitespace() ).unwrap_or(false) {
+            self.read_char();
+        }
+    }
 }
 
 fn is_letter(character: char) -> bool {
     character.is_ascii_alphabetic() || character == '_'
 }
+
 
 #[test]
 fn next_token_test() {
@@ -125,7 +134,7 @@ let add = fn(x, y) {
 
 let result = add(five, ten)";
 
-    let mut lexer = Lexer::new(input.to_string());
+    let mut lexer = Lexer::new(&input);
 
     let expecteds = vec![
         Token {
