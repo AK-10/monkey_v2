@@ -4,7 +4,6 @@ pub struct Token {
     pub literal: String,
 }
 
-
 #[derive(Debug, PartialEq)]
 pub enum TokenType {
     Illegal,
@@ -31,4 +30,12 @@ pub enum TokenType {
     Function,
     Let,
     // CallCC,
+}
+
+pub fn lookupIdent(ident: &String) -> TokenType {
+    match ident.as_str() {
+        "let" => TokenType::Let,
+        "fn" => TokenType::Function,
+        _ => TokenType::Ident
+    }
 }

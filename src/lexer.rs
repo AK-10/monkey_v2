@@ -1,4 +1,4 @@
-use crate::token::{ Token, TokenType };
+use crate::token::*;
 
 #[derive(Debug)]
 pub struct Lexer {
@@ -78,7 +78,7 @@ impl Lexer {
                         if is_letter(cur) {
                             let ident_literal = self.read_identifier();
                             return Token {
-                                token_type: TokenType::Ident,
+                                token_type: lookupIdent(&ident_literal),
                                 literal: ident_literal,
                             }
                         } else {
