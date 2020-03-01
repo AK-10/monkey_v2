@@ -4,11 +4,6 @@ pub struct Token {
     pub literal: String,
 }
 
-// impl Eq for Token {
-//     fn eq(&self, other: &Self) -> bool {
-//         self.token_type == 
-//     }
-// }
 
 #[derive(Debug, PartialEq)]
 pub enum TokenType {
